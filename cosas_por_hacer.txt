@@ -58,4 +58,8 @@ ASUNTO Y MENSAJE ENCRIPTADOS EN LA BD LISTO.
 
 X.FALTA MOSTRAR AL USUARIO EL RESULTADO DEL MENSAJE ENCRIPTADO ANTES DE SU ENVÍO AL SERVIDOR
 
+6)Una vez archivado el mensaje encriptado enviado, el usuario luego tendrá la opción de enviar
+más mensajes o finalizar su sesión.
+
+LISTO.
 

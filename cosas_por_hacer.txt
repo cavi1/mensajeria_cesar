@@ -1,1 +1,61 @@
+1) Antes de poder utilizar la aplicación, el usuario debe registrarse. Para esto, debe completar un
+formulario ingresando sus nombres, apellido, dirección de correo electrónico, nombre de usuario
+(que no debe repetirse) y contraseña de acceso a la aplicación.
+
+NOMBRE DE USUARIO Y MAIL UNICOS POR BD Y FORMULARIO DE REGISTRO CON VALIDACIONES TERMINADO
+
+
+2)Luego, un usuario registrado deberá loguearse con su nombre de usuario y contraseña para
+acceder a las funcionalidades de visualización y envío de mensajes.
+
+LOGIN TERMINADO
+
+
+3)Cuando el logueo se realice
+correctamente, la aplicación debe mostrar un mensaje emergente de bienvenida. En ese mensaje
+se debe informar cuando fue su último acceso a la aplicación y cuantos mensajes nuevos recibió
+desde ese último ingreso. 
+
+AMBIGUEDAD 1: EL ENUNCIADO ME DA A ENTENDER QUE EL MENSAJE EMERGENTE ES ALGO INTERMEDIO ENTRE EL LOGIN Y LA PAGINA PRINCIPAL, POR LO QUE DECIDÍ REALIZARLO DE ESA MANERA
+
+4)Luego de eso, el usuario accede a la pantalla principal de la aplicación. En esa pantalla, debe
+mostrarse lo siguiente:
+
+a) Un listado de los mensajes recibidos: en ese listado se debe mostrar el asunto del
+mensaje, el remitente y la fecha de recepción. Además, los mensajes que no fueron leídos
+deben ser marcados o resaltados de alguna manera especial para que el usuario sepa que
+aún no los ha abierto. Cuando un usuario seleccione alguno de los mensajes del listado,
+éste debe mostrarse en la misma pantalla. Del mensaje debe mostrarse: el asunto y el
+mensaje originales (desencriptados), la fecha de recepción y el remitente. Aquí el usuario
+debe disponer de un recurso para responderlo.
+
+LISTADO DE LOS MENSAJES RECIBIDOS CON REMITENTE ASUNTO Y FECHA DE RECEPCION LISTO.
+
+X.FALTA IMPLEMENTAR LA PAGINA VER MENSAJE (EN LA MISMA PANTALLA PIDE EL ENUNCIADO)
+
+b)Un listado de mensajes enviados: en ese listado se debe mostrar el asunto del mensaje, el
+destinatario y la fecha de envío. Cuando un usuario seleccione alguno de los mensajes del
+listado, éste debe mostrarse en la misma pantalla. Del mensaje debe mostrarse: el asunto
+y el mensaje originales (desencriptados), la fecha de envío y el destinatario.
+
+LISTADO DE MENSAJES ENVIADOS LISTO, CON ASUNTO, DESTINATARIO, Y FECHA DE ENVÍO.
+
+X.FALTA IMPLEMENTAR EL VER MENSAJE SIMILAR AL OTRO
+
+c)Un recurso para redactar y enviar un mensaje nuevo.
+
+RECURSO PARA REDACTAR MENSAJES LISTO.
+
+5)Para enviar un nuevo mensaje, la aplicación debe mostrar un formulario con controles para
+poder indicar el asunto del mensaje, para poder redactarlo, para indicar el desplazamiento que
+deberá aplicarse (cantidad de lugares) para encriptarlo y para seleccionar el usuario destinatario
+del mensaje. Una vez redactado, tanto el asunto como el mensaje deberán ser encriptados y
+mostrados al usuario antes de su envío al servidor. Luego del envío, al llegar al servidor, el asunto
+y el mensaje encriptados deben ser guardados en una base de datos. 
+
+FORMULARIO CON CONTROLES PARA INDICAR CUERPO, ASUNTO, DESTINATARIO, Y DESPLAZAMIENTO LISTO.
+ASUNTO Y MENSAJE ENCRIPTADOS EN LA BD LISTO.
+
+X.FALTA MOSTRAR AL USUARIO EL RESULTADO DEL MENSAJE ENCRIPTADO ANTES DE SU ENVÍO AL SERVIDOR
+
 

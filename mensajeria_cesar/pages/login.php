@@ -1,14 +1,15 @@
 <?php
-
-session_start();
+// pages/login.php
+//require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../clases/usuario.php';
+require_once __DIR__ . '/../clases/mensaje.php';
+require_once __DIR__ . '/../config/sesion.php';
 
 // Si ya está logueado, redirigir al index
-if (isset($_SESSION['usuario_id'])) {
-    header("Location: index.php");
+if (usuario_esta_autenticado()) {
+    header("Location: ../index.php");
     exit();
 }
-
-require_once __DIR__ . '/../config/database.php';
 
 // Variables para mensajes
 $error = '';
@@ -17,110 +18,62 @@ $usuario_valor = '';
 
 // Procesar formulario de login
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Obtener y limpiar datos
-    $usuario = trim($_POST['usuario'] ?? '');
+    $usuario_input = trim($_POST['usuario'] ?? '');
     $password = $_POST['password'] ?? '';
-    $usuario_valor = htmlspecialchars($usuario);
+    $usuario_valor = htmlspecialchars($usuario_input);
     
-    // Validaciones básicas
-    if (empty($usuario) || empty($password)) {
-        $error = 'Usuario y contraseña son obligatorios';
-    } else {
-        // Buscar usuario en la base de datos
-        $consulta = "SELECT id_usuario, nombre, apellido, nombre_usuario, correo, contraseña, ultimo_acceso 
-                FROM usuarios 
-                WHERE nombre_usuario = ?";
+ 
+    // Usar la clase Usuario
+    $usuario_instancia = new Usuario($conexion);
+    $resultado = $usuario_instancia->login($usuario_input, $password);
+    
+    if ($resultado['success']) {
+        // Usar la clase Mensaje para contar mensajes nuevos
+        $mensaje_instancia = new Mensaje($conexion);
         
-        $stmt = $conexion->prepare($consulta);
+        $ultimo_acceso_anterior = $resultado['usuario']['ultimo_acceso'];
+        $mensajes_nuevos = 0;
         
-        if ($stmt) {
-            $stmt->bind_param("s", $usuario);
-            
-            if ($stmt->execute()) {
-                $result = $stmt->get_result();//se que el resultado es unico porque el nombre de usuario es unico, y necesito todos los datos del usuario
-                
-                if ($result->num_rows === 1) {//si esta el usuario en la bd
-                    $user = $result->fetch_assoc(); //me traigo los datos a un arreglo asociativo
-                    
-                    // Verificar contraseña
-                    if (password_verify($password, $user['contraseña'])) {//password verify compara la contraseña ingresada con la hasheada en la bd (con password_hash)
-                        // LOGIN EXITOSO
-                        
-                        // 1. Guardar último acceso anterior para contar mensajes nuevos
-                        $ultimo_acceso_anterior = $user['ultimo_acceso'];
-
-                        
-                        // 2. Actualizar último acceso a AHORA
-                        $actualizar_ultimo_acceso = "UPDATE usuarios SET ultimo_acceso = NOW() 
-                                      WHERE id_usuario = ?";
-                        $stmt_update = $conexion->prepare($actualizar_ultimo_acceso);
-                        $stmt_update->bind_param("i", $user['id_usuario']);
-                        $stmt_update->execute();
-                        $stmt_update->close();
-                        
-                        // 3. Contar mensajes nuevos desde el último acceso
-                        $mensajes_nuevos = 0;
-                        if ($ultimo_acceso_anterior) {//si es null no entra
-                            $sql_mensajes_nuevos = "SELECT COUNT(*) as total 
-                                            FROM mensajes 
-                                            WHERE id_destinatario = ? 
-                                            AND fecha_envio > ? 
-                                            AND leido = 0";
-                            $stmt_mensajes = $conexion->prepare($sql_mensajes_nuevos);
-                            $stmt_mensajes->bind_param("is", $user['id_usuario'], $ultimo_acceso_anterior);
-                            $stmt_mensajes->execute();
-                            $result_mensajes_nuevos = $stmt_mensajes->get_result(); 
-                            $row_mensajes = $result_mensajes_nuevos->fetch_assoc();//me da la row con los datos del mensaje nuevo
-                            $mensajes_nuevos = $row_mensajes['total'] ?? 0; //es el count de mensajes nuevos
-                            $stmt_mensajes->close();
-                        }
-                        
-                        // 4. Guardar datos en sesión
-                        $_SESSION['usuario_id'] = $user['id_usuario'];
-                        $_SESSION['nombre_usuario'] = $user['nombre_usuario'];
-                        $_SESSION['nombre_completo'] = $user['nombre'] . ' ' . $user['apellido'];
-                        $_SESSION['email'] = $user['correo'];
-                        $_SESSION['ultimo_acceso'] = $ultimo_acceso_anterior;
-                        $_SESSION['mensajes_nuevos'] = $mensajes_nuevos;
-                        
-                        // 5. Preparar mensaje de bienvenida
-                        $fecha_formateada = $ultimo_acceso_anterior 
-                            ? date('d/m/Y H:i:s', strtotime($ultimo_acceso_anterior))
-                            : 'Primer acceso';
-                        
-                        $success = "¡Bienvenido, {$user['nombre']}!<br>";
-                        $success .= "Último acceso: {$fecha_formateada}<br>";
-                        $success .= "Mensajes nuevos: {$mensajes_nuevos}<br>";
-                        $success .= "Redirigiendo al panel principal...";
-                        
-                        // 6. Redirigir después de 3 segundos
-                        header("refresh:3;url=index.php");
-                        
-                    } else {
-                        $error = 'Contraseña incorrecta';
-                    }
-                } else {
-                    $error = 'Usuario no encontrado';
-                }
-            } else {
-                $error = 'Error en la consulta: ' . $stmt->error;
-            }
-            
-            $stmt->close();
-        } else {
-            $error = 'Error al preparar la consulta: ' . $conexion->error;
+        if ($ultimo_acceso_anterior) {
+            $mensajes_nuevos = $mensaje_instancia->contar_nuevos_desde(
+                $resultado['usuario']['id'],
+                $ultimo_acceso_anterior
+            );
         }
+        
+        // Obtener IDs de mensajes no leídos
+        $ids_no_leidos = $mensaje_instancia->obtener_ids_no_leidos($resultado['usuario']['id']);
+        
+        // Establecer datos en sesión
+        establecer_usuario_sesion($resultado['usuario']);
+        $_SESSION['ultimo_acceso'] = $ultimo_acceso_anterior;
+        $_SESSION['mensajes_nuevos'] = $mensajes_nuevos;
+        $_SESSION['ids_mensajes_no_leidos'] = $ids_no_leidos;
+        
+        // Preparar mensaje de bienvenida
+        $fecha_formateada = $ultimo_acceso_anterior 
+            ? date('d/m/Y H:i:s', strtotime($ultimo_acceso_anterior))
+            : 'Primer acceso';
+        
+        $success = "¡Bienvenido, {$resultado['usuario']['nombre']}!<br>";
+        $success .= "Último acceso: {$fecha_formateada}<br>";
+        $success .= "Mensajes nuevos: {$mensajes_nuevos}<br>";
+        $success .= "Redirigiendo al panel principal...";
+        
+        header("refresh:3;url=../pages/index.php");
+    } else {
+        $error = $resultado['message'];
     }
+   
 }
-
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Mensajería César</title>
-    <script src="../assets/js/login.js"></script>
 </head>
 <body>
     <div>
@@ -144,14 +97,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <label for="usuario">Nombre de usuario:</label>
                     <input type="text" id="usuario" name="usuario" 
                            value="<?php echo $usuario_valor; ?>" 
-                           required 
-                           autofocus>
+                           required autofocus>
                 </div>
                 
                 <div>
                     <label for="password">Contraseña:</label>
-                    <input type="password" id="password" name="password" 
-                           required>
+                    <input type="password" id="password" name="password" required>
                 </div>
                 
                 <div>
@@ -163,13 +114,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <p>¿No tenes una cuenta? <a href="registro.php">Registrate acá</a></p>
             </div>
         <?php endif; ?>
-        
-        <div>
-            <small>
-                Sistema de Mensajería con Cifrado César<br>
-                Universidad Nacional de la Patagonia San Juan Bosco
-            </small>
-        </div>
     </div>
 </body>
 </html>

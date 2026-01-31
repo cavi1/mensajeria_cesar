@@ -7,7 +7,7 @@ require_once __DIR__ . '/../config/sesion.php';
 
 // Verificar autenticación
 if (!usuario_esta_autenticado()) {
-    header("Location: ../index.php");
+    header("Location: login.php");
     exit();
 }
 
@@ -24,8 +24,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($para_usuario_id) || empty($asunto) || empty($mensaje)) {
         $error = 'Todos los campos son obligatorios';
     } else {
-        $mensajeModel = new Mensaje($conexion);
-        $resultado = $mensajeModel->enviar($de_usuario_id, $para_usuario_id, $asunto, $mensaje, $desplazamiento);
+        $mensaje_instancia = new Mensaje($conexion);
+        $resultado = $mensaje_instancia->enviar($de_usuario_id, $para_usuario_id, $asunto, $mensaje, $desplazamiento);
         
         if ($resultado['success']) {
             $success = $resultado['message'];
@@ -47,6 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Enviar Mensaje</title>
+    <link rel="stylesheet" href="../assets/css/estilos.css">
 </head>
 <body>
     <h1>Enviar Mensaje</h1>

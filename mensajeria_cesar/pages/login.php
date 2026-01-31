@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $success .= "Mensajes nuevos: {$mensajes_nuevos}<br>";
         $success .= "Redirigiendo al panel principal...";
         
-        header("refresh:3;url=../pages/index.php");
+        header("refresh:3;url=../index.php");
     } else {
         $error = $resultado['message'];
     }
@@ -74,9 +74,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Mensajería César</title>
+     <link rel="stylesheet" href="../assets/css/estilos.css">
 </head>
-<body>
-    <div>
+<body class="pagina-login">
+    <div class="contenedor-login">
         <h1>Mensajería César - Inicio de Sesión</h1>
         
         <?php if (!empty($error)): ?>
@@ -87,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         <?php if (!empty($success)): ?>
             <div>
-                <strong>Éxito:</strong> <?php echo $success; ?>
+                <strong>Login exitoso:</strong> <?php echo $success; ?>
             </div>
         <?php endif; ?>
         

@@ -57,10 +57,11 @@ if (isset($usuario_instancia)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <title>Registro - Mensajería César</title>
+    <link rel="stylesheet" href="../assets/css/estilos.css">
 </head>
 <script src="../assets/js/registro.js"></script>
-<body>
-    <div>
+<body class="pagina-registro"> 
+    <div class="contenedor-registro">  
         <h1>Mensajería César - Registro</h1>
         
         <?php if (!empty($error)): ?>

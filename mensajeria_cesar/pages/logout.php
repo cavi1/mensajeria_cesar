@@ -3,6 +3,6 @@
 
 session_start();
 session_destroy();
-header("Location: mensajeria_cesar/pages/login.php");
+header("Location: login.php");
 exit();
 ?>

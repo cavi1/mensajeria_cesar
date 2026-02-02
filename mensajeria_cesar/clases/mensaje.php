@@ -3,11 +3,11 @@
 require_once __DIR__ . '/cifrado_cesar.php';
 
 class Mensaje {
-    private $conn;
+    private $conexion;
     private $cifrador;
     
     function __construct($conexion) {
-        $this->conn = $conexion;
+        $this->conexion = $conexion;
         $this->cifrador = new Cifrado_cesar();
     }
     
@@ -20,7 +20,7 @@ class Mensaje {
                 VALUES (?, ?, ?, ?, ?)";
         
         try {
-            $stmt = $this->conn->prepare($sql);
+            $stmt = $this->conexion->prepare($sql);
             $stmt->bind_param("iissi", $de_usuario_id, $para_usuario_id, $asunto_cifrado, $mensaje_cifrado, $desplazamiento);
             
             if ($stmt->execute()) {
@@ -44,7 +44,7 @@ class Mensaje {
                 LIMIT ?";
         
         $mensajes = [];
-        $stmt = $this->conn->prepare($sql);
+        $stmt = $this->conexion->prepare($sql);
         $stmt->bind_param("ii", $usuario_id, $limite);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -72,7 +72,7 @@ class Mensaje {
                 LIMIT ?";
         
         $mensajes = [];
-        $stmt = $this->conn->prepare($sql);
+        $stmt = $this->conexion->prepare($sql);
         $stmt->bind_param("ii", $usuario_id, $limite);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -100,7 +100,7 @@ class Mensaje {
                 WHERE m.id_mensaje = ? 
                 AND (m.id_remitente = ? OR m.id_destinatario = ?)";
         
-        $stmt = $this->conn->prepare($sql);
+        $stmt = $this->conexion->prepare($sql);
         $stmt->bind_param("iii", $mensaje_id, $usuario_id, $usuario_id);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -130,7 +130,7 @@ class Mensaje {
         $sql = "UPDATE mensajes SET leido = 1, fecha_leido = NOW() 
                 WHERE id_mensaje = ? AND id_destinatario = ? AND leido = 0";
         
-        $stmt = $this->conn->prepare($sql);
+        $stmt = $this->conexion->prepare($sql);
         $stmt->bind_param("ii", $mensaje_id, $usuario_id);
         return $stmt->execute();
     }
@@ -143,7 +143,7 @@ class Mensaje {
                 AND fecha_envio > ? 
                 AND leido = 0";
         
-        $stmt = $this->conn->prepare($sql);
+        $stmt = $this->conexion->prepare($sql);
         $stmt->bind_param("is", $usuario_id, $fecha_desde);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -160,7 +160,7 @@ class Mensaje {
                 AND leido = 0";
         
         $ids = [];
-        $stmt = $this->conn->prepare($sql);
+        $stmt = $this->conexion->prepare($sql);
         $stmt->bind_param("i", $usuario_id);
         $stmt->execute();
         $result = $stmt->get_result();

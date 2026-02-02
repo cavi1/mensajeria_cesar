@@ -18,13 +18,13 @@ $nombre_completo = $_SESSION['nombre_completo'] ?? 'Usuario';
 $mensajes_nuevos = $_SESSION['mensajes_nuevos'] ?? 0;
 
 // Instanciar las clases
-$usuarioModel = new Usuario($conexion);
-$mensajeModel = new Mensaje($conexion);
+$usuario_instancia = new Usuario($conexion);
+$mensaje_instancia = new Mensaje($conexion);
 
 // Obtener datos usando las clases
-$mensajes_recibidos = $mensajeModel->obtener_recibidos($usuario_id, 10);
-$mensajes_enviados = $mensajeModel->obtener_enviados($usuario_id, 10);
-$usuarios = $usuarioModel->obtener_todos_excepto($usuario_id);
+$mensajes_recibidos = $mensaje_instancia->obtener_recibidos($usuario_id, 10);
+$mensajes_enviados = $mensaje_instancia->obtener_enviados($usuario_id, 10);
+$usuarios = $usuario_instancia->obtener_todos_excepto($usuario_id);
 ?>
 
 <!DOCTYPE html>
@@ -35,7 +35,8 @@ $usuarios = $usuarioModel->obtener_todos_excepto($usuario_id);
     <title>Dashboard - Mensajería César</title>
     <link rel="stylesheet" href="assets/css/estilos.css">
 </head>
-<script src="assets/js/ver_mensaje_ajax.js"></script>
+<script src="ver_mensaje_ajax.js"></script>
+<script src="assets/js/respuesta.js"></script>
 <body class="pagina-dashboard">
     <div>
         <header>
@@ -81,16 +82,11 @@ $usuarios = $usuarioModel->obtener_todos_excepto($usuario_id);
                                         ?>
                                     </td>
                                     <td><?php echo date('d/m/Y H:i', strtotime($mensaje['fecha_envio'])); ?></td>
-                                    <td><?php echo $mensaje['leido'] ? 'Leído' : 'Nuevo'; ?></td>
+                                    <td><?php echo $mensaje['leido'] ? 'Leído' : 'Sin leer'; ?></td>
                                     <td>
                                         <button id="boton-ver-detalle-mensaje" class="button-ver-marcar" onclick="ver_mensaje(<?php echo $mensaje['id_mensaje'];?>);">
-                                            Ver
+                                            Ver mensaje
                                         </button>
-                                        <?php if (!$mensaje['leido']): ?>
-                                            <button class="button-ver-marcar">
-                                            Marcar como leído
-                                        </button>
-                                        <?php endif; ?>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -130,9 +126,9 @@ $usuarios = $usuarioModel->obtener_todos_excepto($usuario_id);
                                     </td>
                                     <td><?php echo date('d/m/Y H:i', strtotime($mensaje['fecha_envio'])); ?></td>
                                     <td>
-                                        <a href="pages/ver_mensaje.php?id=<?php echo $mensaje['id_mensaje']; ?>&tipo=enviado">
-                                            Ver
-                                        </a>
+                                        <button id="boton-ver-detalle-mensaje" class="button-ver-marcar" onclick="ver_mensaje(<?php echo $mensaje['id_mensaje'];?>);">
+                                            Ver mensaje
+                                        </button>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -140,12 +136,69 @@ $usuarios = $usuarioModel->obtener_todos_excepto($usuario_id);
                     </table>
                 <?php endif; ?>
             </section>
-            
-            <!-- ENVIAR NUEVO MENSAJE -->
-            <section>
-                <h2>Enviar Nuevo Mensaje</h2>
-                
-                <form method="POST" action="enviar.php">
+
+                    <!-- EN tu index.php, asegúrate de tener esto -->
+            <div id="modal-mensaje" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000;">
+                <div style="background:white; margin:50px auto; padding:20px; width:80%; max-width:600px;">
+                    
+                    <!-- VISTA DEL MENSAJE (se ve primero) -->
+                    <div id="vista-mensaje">
+                        <h2>Detalle del Mensaje</h2>
+                        
+                        <p><strong>Asunto:</strong> <span id="seccion-asunto"></span></p>
+                        <p><strong>Remitente:</strong> <span id="seccion-receptor-mensaje"></span></p>
+                        <p><strong>ID remitente:</strong> <span id="seccion-id-receptor-mensaje-oculta"></span></p>
+                        <p><strong>Fecha:</strong> <span id="seccion-fecha-recepcion"></span></p>
+                        <p><strong>Mensaje:</strong></p>
+                        <div id="seccion-cuerpo-mensaje" style="padding:10px; background:#f5f5f5; border:1px solid #ddd; min-height:100px;"></div>
+                        
+                        <div style="margin-top:20px; text-align:right;">
+                            <button id="btn-responder-modal" onclick="mostrar_formulario_respuesta()" style="display:none;">
+                                Responder
+                            </button>
+                            <button onclick="cerrar_modal()">
+                                Cerrar
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- FORMULARIO DE RESPUESTA (oculto inicialmente) -->
+                    <div id="formulario-respuesta" style="display:none;">
+                        <form method="POST" action="pages/enviar.php">
+                            <h2>Responder Mensaje</h2>                           
+                            <div>
+                                <p><strong>Respondiendo a:</strong> <span id="respuesta-remitente"></span></p>
+                                <p><strong>Asunto original:</strong> <span id="respuesta-asunto-original-vista"></span></p>
+                            </div>
+                            
+                            <input type="hidden" name="destinatario" id="id-original-remitente">
+                            <input type="hidden" name="asunto" id="respuesta-asunto-original">     
+
+                            <div style="margin-bottom:15px;">
+                                <label style="display:block; margin-bottom:5px; font-weight:bold;">Tu respuesta:</label>
+                                <textarea id="texto-respuesta" name="mensaje" rows="6" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:4px;"></textarea>
+                            </div>
+                            <div>
+                                <label for="desplazamiento">Desplazamiento (1-26):</label>
+                                <input type="number" id="desplazamiento" name="desplazamiento" 
+                                    min="1" max="26" value="4" required>
+                            </div>
+                            <div style="margin-top:20px; text-align:right;">
+                                <button type="submit" style="background:#4CAF50; color:white; padding:8px 16px; border:none; border-radius:4px; cursor:pointer;">
+                                    Enviar Respuesta
+                                </button>
+                                <button type="button" onclick="volver_a_vista_mensaje()" style="background:#757575; color:white; padding:8px 16px; border:none; border-radius:4px; cursor:pointer;">
+                                    Cancelar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                </div>
+            </div>
+
+            <section>    
+                <form method="POST" action="pages/enviar.php">
                     <div>
                         <label for="destinatario">Destinatario:</label>
                         <select id="destinatario" name="destinatario" required>

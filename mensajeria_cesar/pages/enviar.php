@@ -19,10 +19,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $para_usuario_id = $_POST['destinatario'] ?? '';
     $asunto = trim($_POST['asunto'] ?? '');
     $mensaje = trim($_POST['mensaje'] ?? '');
-    $desplazamiento = $_POST['desplazamiento'] ?? 4;
+    $desplazamiento = $_POST['desplazamiento'] ?? 69;
     
     if (empty($para_usuario_id) || empty($asunto) || empty($mensaje)) {
-        $error = 'Todos los campos son obligatorios';
+       $error = 'Todos los campos son obligatorios. id_destinatario: ' . $para_usuario_id . ' asunto: ' . $asunto . ' mensaje: ' . $mensaje . ' desplazamiento: ' . $desplazamiento;
     } else {
         $mensaje_instancia = new Mensaje($conexion);
         $resultado = $mensaje_instancia->enviar($de_usuario_id, $para_usuario_id, $asunto, $mensaje, $desplazamiento);
@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($resultado['success']) {
             $success = $resultado['message'];
             // Redirigir después de 2 segundos
-            header("refresh:2;url=../pages/index.php");
+            header("refresh:2;url=../index.php");
         } else {
             $error = $resultado['message'];
         }

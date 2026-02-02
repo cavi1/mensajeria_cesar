@@ -26,11 +26,17 @@ function ver_mensaje(id_mensaje){
                 document.getElementById("btn-responder-modal").style.display = "inline-block";
                 
                 // Configurar datos para el formulario
-                configurarDatosParaRespuesta(myObj);
+                //configurarDatosParaRespuesta(myObj);
             } else {
                 // Ocultar botón de responder
                 document.getElementById("btn-responder-modal").style.display = "none";
             }
+
+            if (myObj.es_destinatario && myObj.fue_marcado_leido) {
+                window.necesita_recargar = true; // Usar window. para acceso global
+                console.log("Se marcó para recargar: mensaje leído");
+            }
+            
         }
     }
 }

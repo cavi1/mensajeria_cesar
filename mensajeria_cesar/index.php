@@ -35,6 +35,7 @@ $usuarios = $usuario_instancia->obtener_todos_excepto($usuario_id);
     <title>Dashboard - Mensajería César</title>
     <link rel="stylesheet" href="assets/css/estilos.css">
 </head>
+<script src="globals.js"></script>
 <script src="ver_mensaje_ajax.js"></script>
 <script src="assets/js/respuesta.js"></script>
 <body class="pagina-dashboard">
@@ -69,7 +70,7 @@ $usuarios = $usuario_instancia->obtener_todos_excepto($usuario_id);
                         </thead>
                         <tbody>
                             <?php foreach ($mensajes_recibidos as $mensaje): ?>
-                                <tr style="<?php echo $mensaje['leido'] ? '' : 'font-weight: bold;'; ?>">
+                                <tr style="<?php echo $mensaje['leido'] ? '' : 'font-weight: bold;';?>" data-mensaje-id="<?php echo $mensaje['id_mensaje']; ?>">
                                     <td><?php echo htmlspecialchars($mensaje['remitente']); ?></td>
                                     <td>
                                         <?php 

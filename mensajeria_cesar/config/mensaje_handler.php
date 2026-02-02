@@ -18,6 +18,10 @@ if (isset($_POST['id_mensaje'])) {
         // DEBUG
         error_log("DEBUG Handler: Mensaje encontrado: " . print_r($mensaje, true));
         
+         if ($mensaje['id_destinatario'] == $usuario_id && $mensaje['leido'] == 0) {
+            $mensaje_instancia->marcar_como_leido($mensaje_id, $usuario_id);
+        }
+
         $es_remitente = ($mensaje['id_remitente'] == $usuario_id);
         $es_destinatario = ($mensaje['id_destinatario'] == $usuario_id);
         
@@ -32,7 +36,9 @@ if (isset($_POST['id_mensaje'])) {
             'id_remitente' => $mensaje['id_remitente'] ?? 'Sin remitente',
             'es_remitente' => $es_remitente,  // NUEVO: indica si el usuario ES el remitente
             'es_destinatario' => $es_destinatario,// NUEVO: indica si el usuario ES el destinatario
-            'puede_responder' => $es_destinatario
+            'puede_responder' => $es_destinatario,
+            'id_mensaje' => $mensaje_id,
+            'fue_marcado_leido' => ($mensaje['id_destinatario'] == $usuario_id && $mensaje['leido'] == 0)
         ];
         
         echo json_encode($respuesta);

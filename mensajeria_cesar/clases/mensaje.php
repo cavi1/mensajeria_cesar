@@ -127,7 +127,7 @@ class Mensaje {
     
     
     function marcar_como_leido($mensaje_id, $usuario_id) {
-        $sql = "UPDATE mensajes SET leido = 1, fecha_leido = NOW() 
+        $sql = "UPDATE mensajes SET leido = 1 
                 WHERE id_mensaje = ? AND id_destinatario = ? AND leido = 0";
         
         $stmt = $this->conexion->prepare($sql);

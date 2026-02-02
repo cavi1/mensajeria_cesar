@@ -45,6 +45,13 @@ function cerrar_modal() {
     document.getElementById("modal-mensaje").style.display = "none";
     // Volver a vista inicial por si acaso
     volver_a_vista_mensaje();
+
+     if (window.necesita_recargar) {
+        setTimeout(function() {
+            location.reload();
+        }, 300);
+        window.necesita_recargar = false; // Resetear
+    }
 }
 
 // Función para enviar respuesta (simulada por ahora)

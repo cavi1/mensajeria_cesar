@@ -40,3 +40,58 @@ function ver_mensaje(id_mensaje){
         }
     }
 }
+
+function probar_modal(){
+    var asunto = document.getElementById("asunto").value;
+    var mensaje = document.getElementById("mensaje").value;
+    var desplazamiento = document.getElementById("desplazamiento-mensaje-index").value;
+    var destinatario = document.getElementById("destinatario").value;
+    var asunto_ver = document.getElementById("seccion-asunto-a-enviar");
+    var desp_ver = document.getElementById("desplazamiento-a-enviar");
+
+    if(!asunto || !mensaje || (!desplazamiento || desplazamiento < 1 || desplazamiento > 26) || !destinatario){
+         alert("Por favor, completa todos los campos correctamente:\n" +
+              "- Destinatario: Selecciona un usuario\n" +
+              "- Desplazamiento: Entre 1 y 26\n" +
+              "- Asunto: No puede estar vacío\n" +
+              "- Mensaje: No puede estar vacío");
+    }
+    else{
+        asunto_ver.innerHTML=asunto;
+        desp_ver.innerHTML=desplazamiento;
+        document.getElementById("modal-mensaje-previsualizado").style.display = "block";
+    }
+}
+
+
+function vista_previa_mensaje_y_encriptado(){
+    var asunto_mensaje = document.getElementById("asunto").value;
+    var texto_mensaje = document.getElementById("mensaje").value;
+    var desplazamiento = document.getElementById("desplazamiento-mensaje-index").value;
+    var parametros= "asunto_mensaje="+asunto_mensaje+"&texto_mensaje="+texto_mensaje+"&desplazamiento="+desplazamiento;
+    var peticion = new XMLHttpRequest();
+    peticion.open("POST","config/previsualizado_handler.php",true);
+    peticion.onreadystatechange= muestro_modal_previsualizado_mensaje;
+    peticion.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    peticion.send(parametros);
+
+    function muestro_modal_previsualizado_mensaje(){
+        
+         var asunto_ver = document.getElementById("seccion-asunto-a-enviar");
+         asunto_ver.innerHTML=asunto_mensaje;
+         var mensaje_ver = document.getElementById("seccion-cuerpo-mensaje-a-enviar");
+         mensaje_ver.innerHTML=texto_mensaje;
+        if ((peticion.readyState == 4) && (peticion.status==200)){
+            var myObj = JSON.parse(peticion.responseText);
+            var asunto_encriptado = document.getElementById("seccion-asunto-a-enviar-encriptado")
+            asunto_encriptado.innerHTML=myObj.asunto_encriptado_prev;
+            var mensaje_encriptado = document.getElementById("seccion-cuerpo-mensaje-a-enviar-encriptado");
+            mensaje_encriptado.innerHTML=myObj.mensaje_encriptado_prev;
+        }
+        document.getElementById("modal-mensaje-previsualizado").style.display = "block";
+    }
+
+}
+
+
+

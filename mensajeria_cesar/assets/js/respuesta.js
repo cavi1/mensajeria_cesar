@@ -43,6 +43,7 @@ function volver_a_vista_mensaje() {
 // Función para cerrar el modal completamente
 function cerrar_modal() {
     document.getElementById("modal-mensaje").style.display = "none";
+    document.getElementById("modal-mensaje-previsualizado").style.display = "none";
     // Volver a vista inicial por si acaso
     volver_a_vista_mensaje();
 

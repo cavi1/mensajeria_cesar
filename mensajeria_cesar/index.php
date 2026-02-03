@@ -181,8 +181,8 @@ $usuarios = $usuario_instancia->obtener_todos_excepto($usuario_id);
                             </div>
                             <div>
                                 <label for="desplazamiento">Desplazamiento (1-26):</label>
-                                <input type="number" id="desplazamiento" name="desplazamiento" 
-                                    min="1" max="26" value="4" required>
+                                <input type="number" id="desplazamiento-mensaje-respuesta" name="desplazamiento" 
+                                    min="1" max="26" value="3" required>
                             </div>
                             <div style="margin-top:20px; text-align:right;">
                                 <button type="submit" style="background:#4CAF50; color:white; padding:8px 16px; border:none; border-radius:4px; cursor:pointer;">
@@ -214,7 +214,7 @@ $usuarios = $usuario_instancia->obtener_todos_excepto($usuario_id);
                     
                     <div>
                         <label for="desplazamiento">Desplazamiento (1-26):</label>
-                        <input type="number" id="desplazamiento" name="desplazamiento" 
+                        <input type="number" id="desplazamiento-mensaje-index" name="desplazamiento" 
                             min="1" max="26" value="4" required>
                         <small>Número de posiciones para cifrar</small>
                     </div>
@@ -232,10 +232,37 @@ $usuarios = $usuario_instancia->obtener_todos_excepto($usuario_id);
                     </div>
                     
                     <div>
-                        <button type="submit">Enviar Mensaje</button>
+                        <button type="button" onclick="vista_previa_mensaje_y_encriptado()">Enviar Mensaje</button>
                     </div>
+
+                    <div id="modal-mensaje-previsualizado" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000;">
+                        <div style="background:white; margin:50px auto; padding:20px; width:80%; max-width:600px;">
+                            
+                            <div id="vista-mensaje-previsualizado">
+                                <h2>Confirmar envio del mensaje</h2>
+                                <p><strong>Asunto:</strong> <span id="seccion-asunto-a-enviar"></span></p>
+                                <p><strong>Mensaje:</strong></p>
+                                <div id="seccion-cuerpo-mensaje-a-enviar" style="padding:10px; background:#f5f5f5; border:1px solid #ddd; min-height:100px;"></div>
+                                <p><strong>Asunto encriptado:</strong> <span id="seccion-asunto-a-enviar-encriptado"></span></p>
+                                <p><strong>Mensaje encriptado:</strong></p>
+                                <div id="seccion-cuerpo-mensaje-a-enviar-encriptado" style="padding:10px; background:#f5f5f5; border:1px solid #ddd; min-height:100px;"></div>
+                                
+                                <div style="margin-top:20px; text-align:right;">
+                                    <button type="submit" id="btn-confirmar-envio-mensaje">
+                                        Confirmar
+                                    </button>
+                                    <button type="button" onclick="cerrar_modal()">
+                                        Cerrar
+                                    </button>
+                                </div>
+                            </div>   
+                        </div>
+                    </div>            
+
+
                 </form>
             </section>
+
         </main>
         
         <footer>

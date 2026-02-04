@@ -11,7 +11,7 @@ if (isset($_POST['asunto_mensaje'])&& isset($_POST['texto_mensaje'])&& isset($_P
 
     $respuesta = [
         'asunto_encriptado_prev'=>$asunto_encriptado,
-        'mensaje_encriptado_prev'=>$asunto_encriptado
+        'mensaje_encriptado_prev'=>$mensaje_encriptado
     ];
     echo json_encode($respuesta);
 }

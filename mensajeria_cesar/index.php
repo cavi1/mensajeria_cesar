@@ -5,11 +5,8 @@ require_once __DIR__ . '/clases/usuario.php';
 require_once __DIR__ . '/clases/mensaje.php';
 require_once __DIR__ . '/config/sesion.php';
 
-// Verificar que el usuario esté logueado
-if (!usuario_esta_autenticado()) {
-    header("Location: pages/login.php");
-    exit();
-}
+// Funcion del archivo sesion
+requiere_autenticacion();
 
 // Obtener datos del usuario actual desde sesión
 $usuario_id = $_SESSION['usuario_id'];
@@ -73,13 +70,8 @@ $usuarios = $usuario_instancia->obtener_todos_excepto($usuario_id);
                                 <tr style="<?php echo $mensaje['leido'] ? '' : 'font-weight: bold;';?>" data-mensaje-id="<?php echo $mensaje['id_mensaje']; ?>">
                                     <td><?php echo htmlspecialchars($mensaje['remitente']); ?></td>
                                     <td>
-                                        <?php 
-                                        // Mostrar asunto descifrado si está disponible
-                                        if (isset($mensaje['asunto_descifrado'])) {
+                                        <?php
                                             echo htmlspecialchars($mensaje['asunto_descifrado']);
-                                        } else {
-                                            echo htmlspecialchars($mensaje['asunto_encriptado']);
-                                        }
                                         ?>
                                     </td>
                                     <td><?php echo date('d/m/Y H:i', strtotime($mensaje['fecha_envio'])); ?></td>
@@ -138,11 +130,11 @@ $usuarios = $usuario_instancia->obtener_todos_excepto($usuario_id);
                 <?php endif; ?>
             </section>
 
-                    <!-- EN tu index.php, asegúrate de tener esto -->
+                    <!-- Modal para la vista del mensaje -->
             <div id="modal-mensaje" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000;">
                 <div style="background:white; margin:50px auto; padding:20px; width:80%; max-width:600px;">
                     
-                    <!-- VISTA DEL MENSAJE (se ve primero) -->
+                    <!--Vista del mensaje producto de la llamada ajax-->
                     <div id="vista-mensaje">
                         <h2>Detalle del Mensaje</h2>
                         
@@ -153,6 +145,7 @@ $usuarios = $usuario_instancia->obtener_todos_excepto($usuario_id);
                         <p><strong>Mensaje:</strong></p>
                         <div id="seccion-cuerpo-mensaje" style="padding:10px; background:#f5f5f5; border:1px solid #ddd; min-height:100px;"></div>
                         
+                        <!--Botones para responder o cerrar detalle mensaje-->
                         <div style="margin-top:20px; text-align:right;">
                             <button id="btn-responder-modal" onclick="mostrar_formulario_respuesta()" style="display:none;">
                                 Responder
@@ -163,7 +156,7 @@ $usuarios = $usuario_instancia->obtener_todos_excepto($usuario_id);
                         </div>
                     </div>
                     
-                    <!-- FORMULARIO DE RESPUESTA (oculto inicialmente) -->
+                     <!--Seccion para responder mensajes-->
                     <div id="formulario-respuesta" style="display:none;">
                         <form method="POST" action="pages/enviar.php">
                             <h2>Responder Mensaje</h2>                           
@@ -198,6 +191,7 @@ $usuarios = $usuario_instancia->obtener_todos_excepto($usuario_id);
                 </div>
             </div>
 
+            <!--Seccion para enviar un nuevo mensaje desde cero-->
             <section>    
                 <form method="POST" action="pages/enviar.php">
                     <div>
@@ -234,6 +228,8 @@ $usuarios = $usuario_instancia->obtener_todos_excepto($usuario_id);
                     <div>
                         <button type="button" onclick="vista_previa_mensaje_y_encriptado()">Enviar Mensaje</button>
                     </div>
+
+                    <!--Seccion de previsualizado de mensajes-->
 
                     <div id="modal-mensaje-previsualizado" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000;">
                         <div style="background:white; margin:50px auto; padding:20px; width:80%; max-width:600px;">

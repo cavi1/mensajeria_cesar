@@ -8,26 +8,22 @@ var datos_mensaje_actual = {
     desplazamiento: 3
 };
 
-// Función para mostrar el formulario de respuesta
+
 function mostrar_formulario_respuesta() {
-    // Obtener datos del mensaje actual (simulados por ahora)
-    // Cuando integres con AJAX, estos vendrán de la respuesta
     var remitente = document.getElementById("seccion-receptor-mensaje").textContent;
     var asunto = document.getElementById("seccion-asunto").textContent;
     var id_remitente = document.getElementById("seccion-id-receptor-mensaje-oculta").textContent;
     
     
-    // Actualizar información en el formulario
     document.getElementById("respuesta-remitente").textContent = remitente;
     document.getElementById("respuesta-asunto-original-vista").textContent = asunto;
     document.getElementById("respuesta-asunto-original").value = asunto;
     document.getElementById("id-original-remitente").value = id_remitente;
-    // Cambiar vista: ocultar mensaje, mostrar formulario
+
     document.getElementById("vista-mensaje").style.display = "none";
     document.getElementById("formulario-respuesta").style.display = "block";
     
-    // Enfocar el textarea
-    //document.getElementById("texto-respuesta").focus();
+
 }
 
 // Función para volver a la vista del mensaje

@@ -12,8 +12,8 @@ class Cifrado_cesar{
 function __construct(){
     $this->alfabeto_mayus="ABCDEFGHIJKLMNÑOPQRSTUVWXYZ";
     $this->alfabeto_minus="abcdefghijklmnñopqrstuvwxyz";
-    $this->long_str_alfabeto_minus=strlen($this->alfabeto_minus);
-    $this->long_str_alfabeto_mayus=strlen($this->alfabeto_mayus);
+    $this->long_str_alfabeto_mayus = mb_strlen($this->alfabeto_mayus, 'UTF-8');
+    $this->long_str_alfabeto_minus = mb_strlen($this->alfabeto_minus, 'UTF-8');;
     $this->numeros="0123456789";
     $this->long_str_numeros=strlen($this->numeros);
 }

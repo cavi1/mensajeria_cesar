@@ -9,11 +9,12 @@ function __construct($conexion){
     $this->conexion=$conexion;
 }
 
+//usada en registro
 function registrar($nombre, $apellido, $email, $nombre_usuario, $password) {
-        // Validaciones básicas
+        // Validaciones básicas que si bien todas ellas estan en el propio formulario antes de enviar al servidor, son necesarias por si se modifica algo del lado del cliente con una herramienta externa
         if (empty($nombre) || empty($apellido) || empty($email) || 
             empty($nombre_usuario) || empty($password)) {
-            return ['success' => false, 'message' => 'Todos los campos son obligatorios'];//retorno arreglo asociativo 
+            return ['success' => false, 'message' => 'Todos los campos son obligatorios'];
         }
         
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -33,10 +34,10 @@ function registrar($nombre, $apellido, $email, $nombre_usuario, $password) {
             return ['success' => false, 'message' => 'El nombre de usuario o email ya están registrados'];
         }
         
-        // Hash de la contraseña
+        // Hash de la contraseña que despues desencripto con otra funcion nativa de php
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
         
-        // Insertar nuevo usuario
+        // Insertar nuevo usuario si supera todas las verificaciones anteriores
         $sql = "INSERT INTO usuarios (nombre, apellido, nombre_usuario, correo, contraseña) 
                 VALUES (?, ?, ?, ?, ?)";
         
@@ -58,6 +59,7 @@ function registrar($nombre, $apellido, $email, $nombre_usuario, $password) {
         }
     }
 
+    //usada en login
     function login($nombre_usuario, $password) {
         if (empty($nombre_usuario) || empty($password)) {
             return ['success' => false, 'message' => 'Usuario y contraseña son obligatorios'];
@@ -102,6 +104,7 @@ function registrar($nombre, $apellido, $email, $nombre_usuario, $password) {
         }
     }
     
+
     private function existe_usuario($nombre_usuario, $email) {
         $sql = "SELECT id_usuario FROM usuarios WHERE nombre_usuario = ? OR correo = ?";
         $stmt = $this->conexion->prepare($sql);
@@ -111,6 +114,8 @@ function registrar($nombre, $apellido, $email, $nombre_usuario, $password) {
         return $stmt->num_rows > 0;
     }
 
+
+    //usada en login
     private function actualizar_ultimo_acceso($usuario_id) {
         $sql = "UPDATE usuarios SET ultimo_acceso = NOW() WHERE id_usuario = ?";
         $stmt = $this->conexion->prepare($sql);
@@ -118,7 +123,8 @@ function registrar($nombre, $apellido, $email, $nombre_usuario, $password) {
         return $stmt->execute();
     }
 
-    function obtener_todos_excepto($usuario_id) { //para listar los usuarios a los cuales se les puede enviar mensajes
+    //para listar los usuarios a los cuales se les puede enviar mensajes (usada en index.php)
+    function obtener_todos_excepto($usuario_id) {
         $sql = "SELECT id_usuario, nombre_usuario, nombre, apellido 
                 FROM usuarios 
                 WHERE id_usuario != ? 

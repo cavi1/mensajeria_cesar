@@ -6,9 +6,9 @@ require_once __DIR__ . '/../config/sesion.php';
 
 // Redirigir si ya está logueado
 if (usuario_esta_autenticado()) {
-    header("Location: ../index.php");
-    exit();
-}
+        header("Location: /mensajeria_cesar/index.php");
+        exit();
+    }
 
 // Variables para el formulario
 $error = '';
@@ -28,7 +28,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $confirm_password = $_POST['confirm_password'] ?? '';
     
     $usuario_instancia = new Usuario($conexion);
-    
+
+
+    //segunda verificación de matcheo de password aparte de la del js
     if ($password !== $confirm_password) {
         $error = 'Las contraseñas no coinciden.';
     } else {

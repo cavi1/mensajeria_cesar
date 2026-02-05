@@ -9,7 +9,7 @@ function usuario_esta_autenticado() {
 // Redirigir a login si no está autenticado
 function requiere_autenticacion() {
     if (!usuario_esta_autenticado()) {
-        header("Location: ../pages/login.php");
+        header("Location: /mensajeria_cesar/pages/login.php");
         exit();
     }
 }

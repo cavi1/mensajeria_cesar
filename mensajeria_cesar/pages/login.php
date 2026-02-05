@@ -1,15 +1,14 @@
 <?php
-// pages/login.php
-//require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../clases/usuario.php';
 require_once __DIR__ . '/../clases/mensaje.php';
 require_once __DIR__ . '/../config/sesion.php';
 
 // Si ya está logueado, redirigir al index
 if (usuario_esta_autenticado()) {
-    header("Location: ../index.php");
-    exit();
-}
+        header("Location: /mensajeria_cesar/index.php");
+        exit();
+    }
 
 // Variables para mensajes
 $error = '';
@@ -28,12 +27,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $resultado = $usuario_instancia->login($usuario_input, $password);
     
     if ($resultado['success']) {
-        // Usar la clase Mensaje para contar mensajes nuevos
+        // Usa la clase Mensaje para contar mensajes nuevos
         $mensaje_instancia = new Mensaje($conexion);
         
         $ultimo_acceso_anterior = $resultado['usuario']['ultimo_acceso'];
         $mensajes_nuevos = 0;
         
+        //importante: los mensajes nuevos son los mensajes que le llegan a la persona desde la ultima vez que inició sesion, no los mensajes sin leer
         if ($ultimo_acceso_anterior) {
             $mensajes_nuevos = $mensaje_instancia->contar_nuevos_desde(
                 $resultado['usuario']['id'],
@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             );
         }
         
-        // Obtener IDs de mensajes no leídos
+        // Obtener IDs de mensajes no leídos para poder resaltarlos en el index
         $ids_no_leidos = $mensaje_instancia->obtener_ids_no_leidos($resultado['usuario']['id']);
         
         // Establecer datos en sesión
@@ -55,6 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             ? date('d/m/Y H:i:s', strtotime($ultimo_acceso_anterior))
             : 'Primer acceso';
         
+        //ambiguedad 1: mensaje emergente con la información pedida pero parte de ella no está en el index
         $success = "¡Bienvenido, {$resultado['usuario']['nombre']}!<br>";
         $success .= "Último acceso: {$fecha_formateada}<br>";
         $success .= "Mensajes nuevos: {$mensajes_nuevos}<br>";
@@ -62,6 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         header("refresh:3;url=../index.php");
     } else {
+        //depende de que error tire el login
         $error = $resultado['message'];
     }
    

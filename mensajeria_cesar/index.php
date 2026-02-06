@@ -30,7 +30,7 @@ $usuarios = $usuario_instancia->obtener_todos_excepto($usuario_id);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Mensajería César</title>
-    <link rel="stylesheet" href="assets/css/estilos.css">
+    <link rel="stylesheet" href="assets/css/estilos_nuevos.css">
 </head>
 <script src="globals.js"></script>
 <script src="ver_mensaje_ajax.js"></script>
@@ -140,7 +140,6 @@ $usuarios = $usuario_instancia->obtener_todos_excepto($usuario_id);
                         
                         <p><strong>Asunto:</strong> <span id="seccion-asunto"></span></p>
                         <p><strong>Remitente:</strong> <span id="seccion-receptor-mensaje"></span></p>
-                        <p><strong>ID remitente:</strong> <span id="seccion-id-receptor-mensaje-oculta"></span></p>
                         <p><strong>Fecha:</strong> <span id="seccion-fecha-recepcion"></span></p>
                         <p><strong>Mensaje:</strong></p>
                         <div id="seccion-cuerpo-mensaje" style="padding:10px; background:#f5f5f5; border:1px solid #ddd; min-height:100px;"></div>
@@ -162,6 +161,7 @@ $usuarios = $usuario_instancia->obtener_todos_excepto($usuario_id);
                             <h2>Responder Mensaje</h2>                           
                             <div>
                                 <p><strong>Respondiendo a:</strong> <span id="respuesta-remitente"></span></p>
+                                <span id="seccion-id-receptor-mensaje-oculta" style="display:none;"></span></p>
                                 <p><strong>Asunto original:</strong> <span id="respuesta-asunto-original-vista"></span></p>
                             </div>
                             

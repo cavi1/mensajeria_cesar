@@ -59,7 +59,7 @@ if (isset($usuario_instancia)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <title>Registro - Mensajería César</title>
-    <link rel="stylesheet" href="../assets/css/estilos.css">
+    <link rel="stylesheet" href="../assets/css/estilos_nuevos.css">
 </head>
 <script src="../assets/js/registro.js"></script>
 <body class="pagina-registro"> 
@@ -124,7 +124,7 @@ if (isset($usuario_instancia)) {
         </form>
         
         <div>
-            <p>¿Ya tienes una cuenta? <a href="login.php">Inicia sesión aquí</a></p>
+            <p>¿Ya tenes una cuenta? <a href="login.php">Inicia sesión acá</a></p>
         </div>
     </div>
     <?php endif; ?>

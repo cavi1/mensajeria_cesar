@@ -6,10 +6,7 @@ require_once __DIR__ . '/../clases/mensaje.php';
 require_once __DIR__ . '/../config/sesion.php';
 
 // Verificar autenticación
-if (!usuario_esta_autenticado()) {
-    header("Location: login.php");
-    exit();
-}
+requiere_autenticacion();
 
 $error = '';
 $success = '';

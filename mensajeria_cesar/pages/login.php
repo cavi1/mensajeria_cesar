@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Mensajería César</title>
-     <link rel="stylesheet" href="../assets/css/estilos.css">
+     <link rel="stylesheet" href="../assets/css/estilos_nuevos.css">
 </head>
 <body class="pagina-login">
     <div class="contenedor-login">

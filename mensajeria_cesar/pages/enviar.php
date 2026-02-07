@@ -1,5 +1,5 @@
 <?php
-// pages/enviar.php
+
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../clases/usuario.php';
 require_once __DIR__ . '/../clases/mensaje.php';

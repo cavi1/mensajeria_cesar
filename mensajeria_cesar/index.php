@@ -22,6 +22,7 @@ $mensaje_instancia = new Mensaje($conexion);
 $mensajes_recibidos = $mensaje_instancia->obtener_recibidos($usuario_id, 10);
 $mensajes_enviados = $mensaje_instancia->obtener_enviados($usuario_id, 10);
 $usuarios = $usuario_instancia->obtener_todos_excepto($usuario_id);
+$_SESSION['ids_mensajes_no_leidos'] = $mensaje_instancia->obtener_ids_no_leidos($usuario_id);
 ?>
 
 <!DOCTYPE html>
@@ -42,7 +43,8 @@ $usuarios = $usuario_instancia->obtener_todos_excepto($usuario_id);
             <div>
                 <p>Bienvenido, <strong><?php echo htmlspecialchars($nombre_completo); ?></strong></p>
                 <p>Usuario: <?php echo htmlspecialchars($nombre_usuario); ?></p>
-                <p>Mensajes nuevos: <strong><?php echo $mensajes_nuevos; ?></strong></p>
+                <p>Mensajes nuevos desde ultima sesión: <strong><?php echo $mensajes_nuevos; ?></strong></p>
+                <p>Mensajes no leídos: <strong><?php echo count($_SESSION['ids_mensajes_no_leidos']); ?></strong></p>
                 <a href="pages/logout.php">Cerrar Sesión</a>
             </div>
         </header>
@@ -175,19 +177,37 @@ $usuarios = $usuario_instancia->obtener_todos_excepto($usuario_id);
                             <div>
                                 <label for="desplazamiento">Desplazamiento (1-26):</label>
                                 <input type="number" id="desplazamiento-mensaje-respuesta" name="desplazamiento" 
-                                    min="1" max="26" value="3" required>
+                                    min="1" max="26" required>
                             </div>
                             <div style="margin-top:20px; text-align:right;">
                                 <button type="submit" style="background:#4CAF50; color:white; padding:8px 16px; border:none; border-radius:4px; cursor:pointer;">
                                     Enviar Respuesta
                                 </button>
+                                <button type="button" onclick="previsualizar_msj_respuesta()" style="background:#4CAF50; color:white; padding:8px 16px; border:none; border-radius:4px; cursor:pointer;" >
+                                        Previsualizar
+                                </button>
                                 <button type="button" onclick="volver_a_vista_mensaje()" style="background:#757575; color:white; padding:8px 16px; border:none; border-radius:4px; cursor:pointer;">
                                     Cancelar
                                 </button>
                             </div>
+                                <div id="modal-mensaje-previsualizado-rta" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000;">
+                                    <div style="background:white; margin:50px auto; padding:20px; width:80%; max-width:600px;">
+                                    
+                                    <div id="vista-mensaje-previsualizado-rta">
+                                        <p><strong>Asunto encriptado:</strong> <span id="seccion-asunto-a-enviar-encriptado-rta"></span></p>
+                                        <p><strong>Mensaje encriptado:</strong></p>
+                                        <div id="seccion-cuerpo-mensaje-a-enviar-encriptado-rta" style="padding:10px; background:#f5f5f5; border:1px solid #ddd; min-height:100px;"></div>
+                                        
+                                        <div style="margin-top:20px; text-align:right;">
+                                            <button type="button" onclick="cerrar_modal_visualizado_rta()">
+                                                volver
+                                            </button>
+                                        </div>
+                                    </div>   
+                                </div>
+                            </div>
                         </form>
                     </div>
-                    
                 </div>
             </div>
 
@@ -253,9 +273,7 @@ $usuarios = $usuario_instancia->obtener_todos_excepto($usuario_id);
                                 </div>
                             </div>   
                         </div>
-                    </div>            
-
-
+                    </div> 
                 </form>
             </section>
 

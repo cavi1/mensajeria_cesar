@@ -1,5 +1,5 @@
 <?php
-// mensaje_handler.php
+
 session_start();
 require_once '../clases/mensaje.php';
 
